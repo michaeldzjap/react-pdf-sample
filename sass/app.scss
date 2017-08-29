@@ -1,0 +1,22 @@
+// 3rd party
+@import "~bootstrap/scss/bootstrap";
+@import "~loaders.css/src/loaders";
+
+// Partials
+@import "partials/pdf";
+@import "partials/loader";
+
+html, body {
+    overflow-x: hidden;
+}
+
+body {
+    background-color: $gray-lighter;
+}
+
+// Constrain pdf container width (xl -> lg)
+@include media-breakpoint-up(xl) {
+    .container-pdf {
+        width: map-get($container-max-widths, lg);
+    }
+}
