@@ -4,7 +4,7 @@ import webpack from 'webpack';
 export default {
     devtool: 'cheap-module-eval-source-map',
     entry: {
-        bundle: './src/app',
+        bundle: './src/index',
         vendor: ['react', 'react-dom'],
         style: './sass/app'
     },
