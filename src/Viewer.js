@@ -4,13 +4,14 @@ import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from
 import 'react-virtualized/styles.css';
 
 import Loader from './Loader';
+import Buttons from './Buttons';
 
 class Viewer extends Component {
 
     constructor(props) {
         super(props);
 
-        this.state = {pdf: null, scale: 1.2};
+        this.state = {pdf: null, scale: 1.2, pageIndex: 0};
         this._cache = new CellMeasurerCache({defaultHeight: 768, fixedWidth: true});
     }
 
@@ -22,10 +23,8 @@ class Viewer extends Component {
         this._cache.clearAll();     // Reset the cached measurements for all cells
     }
 
-    renderError() {
-        return (
-            <p className="text-danger text-center">PDF failed to load!</p>
-        );
+    handleClick(index) {
+        this._list.scrollToRow(index);
     }
 
     rowRenderer({key, index, style, parent}) {
@@ -52,9 +51,9 @@ class Viewer extends Component {
             <Document
                 file="./thesis_michael_dzjap_final.pdf"
                 loading={<Loader />}
-                error={this.renderError()}
                 onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
             >
+                <Buttons onClick={this.handleClick.bind(this)} />
                 <WindowScroller onResize={this.handleResize.bind(this)}>
                     {
                         ({height, isScrolling, onChildScroll, scrollTop}) => (
@@ -67,13 +66,15 @@ class Viewer extends Component {
                                             width={width}
                                             isScrolling={isScrolling}
                                             onScroll={onChildScroll}
+                                            scrollToAlignment="start"
                                             scrollTop={scrollTop}
                                             overscanRowCount={5}
                                             rowCount={this.state.pdf.numPages}
                                             deferredMeasurementCache={this._cache}
                                             rowHeight={this._cache.rowHeight}
                                             rowRenderer={this.rowRenderer.bind(this)}
-                                            style={{outline: 'none'}} />
+                                            style={{outline: 'none'}}
+                                            ref={ref => this._list = ref} />
                                     )
                                 }
                             </AutoSizer>

@@ -1,0 +1,37 @@
+.btn-group {
+    position: absolute;
+    left: 2.5rem;
+    top: 2.5rem;
+    z-index: 999;
+    width: 6.6rem;
+}
+
+.btn {
+    background-color: $red;
+    border: none;
+    border-radius: .125rem;
+    color: white;
+    padding: .625rem 1.5rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: .75rem;
+    box-shadow: 0 .5rem 1rem 0 rgba(0,0,0,0.2), 0 .375rem 1.25rem 0 rgba(0,0,0,0.19);
+    outline: none;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    display: block;
+    width: 6.6rem;
+
+    &:hover {
+        background-color: darken($red, 10%);
+    }
+
+    &:active {
+        background-color: darken($red, 15%);
+    }
+
+    &:not(:last-child) {
+        margin-bottom: .25rem;
+    }
+}
