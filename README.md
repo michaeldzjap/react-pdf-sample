@@ -1,5 +1,5 @@
 # react-pdf-sample
-A [react-pdf](https://github.com/wojtekmaj/react-pdf/tree/new-architecture) + [react-virtualized](https://github.com/bvaughn/react-virtualized) sample project
+A [react-pdf](https://github.com/wojtekmaj/react-pdf) + [react-virtualized](https://github.com/bvaughn/react-virtualized) sample project
 
 ## Installation
 - `npm install`
