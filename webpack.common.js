@@ -1,8 +1,6 @@
 import path from 'path';
-import pkg from './package.json';
 
 export default {
-    mode: 'development',
     entry: {
         bundle: './src/index',
         vendor: [
@@ -18,7 +16,6 @@ export default {
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
-        devtoolModuleFilenameTemplate: 'webpack:///[absolute-resource-path]'
     },
     module: {
         rules: [
@@ -44,7 +41,6 @@ export default {
     resolve: {
         extensions: ['.js', '.jsx', '.scss']
     },
-    devtool: 'cheap-module-eval-source-map',
     optimization: {
         splitChunks: {
             cacheGroups: {
