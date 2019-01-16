@@ -1,4 +1,5 @@
 import path from 'path';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 export default {
     entry: {
@@ -38,6 +39,12 @@ export default {
             }
         ]
     },
+    plugins: [
+        new CopyWebpackPlugin([
+            {from: './src/index.html', to: './'},
+            {from: './src/test.pdf', to: './'},
+        ])
+    ],
     resolve: {
         extensions: ['.js', '.jsx', '.scss']
     },
