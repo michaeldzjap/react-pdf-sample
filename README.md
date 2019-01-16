@@ -1,5 +1,5 @@
 # react-pdf-sample
-A [react-pdf](https://github.com/wojtekmaj/react-pdf) + [react-virtualized](https://github.com/bvaughn/react-virtualized) sample project
+A [react-pdf](https://github.com/wojtekmaj/react-pdf) + ~~[react-virtualized](https://github.com/bvaughn/react-virtualized)~~ [react-window](https://github.com/bvaughn/react-window) sample project
 
 ## Installation
 - `npm install`
@@ -17,3 +17,4 @@ shouldComponentUpdate(nextProps, nextState) {
 }
 ```
 - ~~Scrolling up/back after scrolling to a page using `list.scrollToRow()` causes jumpy behavior. [This](https://github.com/bvaughn/react-virtualized/issues/610) might be related?~~
+- Scrolling using `scrollToItem()` of _react-window_ doesn't seem to be working.
