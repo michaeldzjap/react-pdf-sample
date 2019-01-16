@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
+import React, {PureComponent, Fragment, createRef} from 'react';
 import PropTypes from 'prop-types';
-import { Document, Page }  from 'react-pdf/build/entry.noworker';
-import { AutoSizer, List, WindowScroller } from 'react-virtualized';
-import 'react-virtualized/styles.css';
+import {Document} from 'react-pdf/dist/entry.webpack';
+import {VariableSizeList} from 'react-window';
+import {debounce} from 'throttle-debounce';
 
 import Loader from './Loader';
+import PageRenderer from './PageRenderer';
 import Buttons from './Buttons';
 
-class Viewer extends Component {
+class Viewer extends PureComponent {
 
     static propTypes = {
         scale: PropTypes.number.isRequired
@@ -20,143 +21,155 @@ class Viewer extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {pdf: null, cachedPageHeights: null, responsiveScale: null, currentPage: 1};
-        this._pages = new Map();
-        this._callOrientationChangeHandler = this.handleResize.bind(this);
+        this.state = {
+            containerWidth: null,
+            containerHeight: null,
+            pdf: null,
+            currentPage: 1,
+            cachedPageDimensions: null,
+            responsiveScale: 1
+        };
+
+        this._viewerContainer = createRef();
+        this._list = createRef();
+        this._pages = new Map;
+
+        this._callResizeHandler = debounce(50, this.handleResize.bind(this));
+        this._callOrientationChangeHandler = debounce(1000, this.handleResize.bind(this));
     }
 
     componentDidMount() {
         this._mounted = true;
+        window.addEventListener('resize', this._callResizeHandler);
+        window.addEventListener('orientationchange', this._callOrientationChangeHandler);
     }
 
     componentWillUnmount() {
         this._mounted = false;
-    }
-
-    componentDidUpdate() {
-        if (this.state.cachedPageHeights && !this.state.responsiveScale) {
-            const node = this._pages.get(this.state.currentPage);
-            if (node) {
-                this.setState({
-                    responsiveScale: this.state.cachedPageHeights.get(1) / node.clientHeight
-                }, () => this._list.recomputeRowHeights());
-            }
-        }
-    }
-
-
-    onDocumentLoadSuccess(pdf) {
-        this.setState({pdf});
-        this.cachePageHeights(pdf);
+        window.removeEventListener('resize', this._callResizeHandler);
+        window.removeEventListener('orientationchange', this._callOrientationChangeHandler);
     }
 
     /**
-     * Load all pages so we can cache all page heights.
+     * Load all pages so we can cache all page dimensions.
      *
-     * @param {object} pdf
-     * @return {void|null}
+     * @param {Object} pdf
+     * @returns {void}
      */
-    cachePageHeights(pdf) {
+    cachePageDimensions(pdf) {
         const promises = Array
             .from({length: pdf.numPages}, (v, i) => i + 1)
             .map(pageNumber => pdf.getPage(pageNumber));
 
+        let height = 0;
+
         // Assuming all pages may have different heights. Otherwise we can just
         // load the first page and use its height for determining all the row
         // heights.
-        Promise.all(promises).then(values => {
+        Promise.all(promises).then(pages => {
             if (!this._mounted) {
-                return null;
+                return;
             }
 
-            const pageHeights = values.reduce((accPageHeights, page) => {
-                accPageHeights.set(page.pageIndex + 1, page.pageInfo.view[3] * this.props.scale);
-                return accPageHeights;
-            }, new Map());
+            const pageDimensions = new Map;
+            for (const page of pages) {
+                const w = page.view[2] * this.props.scale;
+                const h = page.view[3] * this.props.scale;
 
-            this.setState({cachedPageHeights: pageHeights});
+                pageDimensions.set(page.pageIndex + 1, [w, h]);
+                height += h;
+            }
+
+            this.setState({
+                cachedPageDimensions: pageDimensions,
+                containerHeight: height
+            });
         });
     }
 
-    computeRowHeight({index}) {
-        const { cachedPageHeights, responsiveScale } = this.state;
-        if (cachedPageHeights && responsiveScale) {
-            return (cachedPageHeights.get(index + 1) / responsiveScale);
+    computeContainerBounds() {
+        if (!this._viewerContainer) {
+            return;
         }
 
-        return 768;
+        const rect = this._viewerContainer.current.getBoundingClientRect();
+        this.setState({
+            containerWidth: rect.width,
+            containerHeight: rect.height
+        });
     }
 
-    updateCurrentVisiblePage({stopIndex}) {
-        this.setState({currentPage: stopIndex + 1});
+    recomputeRowHeights() {
+        this._list.current.resetAfterIndex(0);
+    }
+
+    computeRowHeight(index) {
+        const {cachedPageDimensions, responsiveScale} = this.state;
+        if (cachedPageDimensions && responsiveScale) {
+            return (cachedPageDimensions.get(index + 1)[1] / responsiveScale);
+        }
+
+        return 768; // Initial height
+    }
+
+    onDocumentLoadSuccess(pdf) {
+        this.setState({pdf});
+        this.cachePageDimensions(pdf);
+    }
+
+    updateCurrentVisiblePage({visibleStopIndex}) {
+        this.setState({currentPage: visibleStopIndex + 1});
     }
 
     handleResize() {
+        const {currentPage, cachedPageDimensions, responsiveScale} = this.state;
+
         // Recompute the responsive scale factor on window resize
-        const node = this._pages.get(this.state.currentPage);
-        const responsiveScale = this.state.cachedPageHeights.get(this.state.currentPage) / node.clientHeight;
-        if (responsiveScale !== this.state.responsiveScale) {
-            this.setState({responsiveScale}, () => this._list.recomputeRowHeights());
+        const node = this._pages.get(currentPage);
+        const newResponsiveScale = cachedPageDimensions.get(currentPage)[1] / node.clientHeight;
+        if (responsiveScale !== newResponsiveScale) {
+            this.setState({
+                responsiveScale: newResponsiveScale
+            }, () => this.recomputeRowHeights());
         }
     }
 
     handleClick(index) {
-        this._list.scrollToRow(index);
-    }
-
-    rowRenderer({key, index, style}) {
-        const pageNumber = index + 1;
-
-        return (
-            <div style={style} key={key}>
-                <div ref={ref => this._pages.set(pageNumber, ref)}>
-                    <Page
-                        pdf={this.state.pdf}
-                        pageNumber={pageNumber}
-                        scale={this.props.scale}
-                        onLoadError={error => console.error(error)} />
-                </div>
-            </div>
-        );
+        this._list.current.scrollToItem(index);
     }
 
     render() {
+        const {scale} = this.props;
+        const {cachedPageDimensions, containerHeight, pdf} = this.state;
+
         return (
-            <Document
-                file="./test.pdf"
-                loading={<Loader />}
-                onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
-                onLoadError={error => console.error(error)}
-            >
-                <Buttons numPages={this.state.pdf && this.state.pdf.numPages} onClick={this.handleClick.bind(this)} />
-                <WindowScroller onResize={this.handleResize.bind(this)}>
-                    {
-                        ({height, isScrolling, onChildScroll, scrollTop}) => (
-                            <AutoSizer disableHeight>
-                                {
-                                    ({width}) => (
-                                        <List
-                                            autoheight
-                                            height={height}
-                                            width={width}
-                                            isScrolling={isScrolling}
-                                            onRowsRendered={this.updateCurrentVisiblePage.bind(this)}
-                                            onScroll={onChildScroll}
-                                            scrollToAlignment="start"
-                                            scrollTop={scrollTop}
-                                            overscanRowCount={5}
-                                            rowCount={this.state.pdf.numPages}
-                                            rowHeight={this.computeRowHeight.bind(this)}
-                                            rowRenderer={this.rowRenderer.bind(this)}
-                                            style={{outline: 'none'}}
-                                            ref={ref => this._list = ref} />
-                                    )
-                                }
-                            </AutoSizer>
-                        )
-                    }
-                </WindowScroller>
-            </Document>
+            <div ref={this._viewerContainer}>
+                <Document
+                    file="./test.pdf"
+                    loading={<Loader />}
+                    onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
+                    onLoadError={error => console.error(error)} // eslint-disable-line no-console
+                >
+                    {cachedPageDimensions && (
+                        <Fragment>
+                            <Buttons
+                                numPages={pdf.numPages}
+                                onClick={this.handleClick.bind(this)} />
+                            <VariableSizeList
+                                height={containerHeight}
+                                itemCount={pdf.numPages}
+                                itemSize={this.computeRowHeight.bind(this)}
+                                itemData={{cachedPageDimensions, scale, _pages: this._pages}}
+                                overscanCount={2}
+                                onItemsRendered={this.updateCurrentVisiblePage.bind(this)}
+                                ref={this._list}
+                            >
+                                {PageRenderer}
+                            </VariableSizeList>
+                        </Fragment>
+                    )}
+                </Document>
+            </div>
         );
     }
 
