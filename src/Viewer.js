@@ -33,7 +33,6 @@ class Viewer extends PureComponent {
         };
 
         this._list = createRef();
-        this._listContainer = createRef();
 
         this._callResizeHandler = debounce(50, this.handleResize.bind(this));
         this._callOrientationChangeHandler = debounce(1000, this.handleResize.bind(this));
@@ -173,7 +172,6 @@ class Viewer extends PureComponent {
                             overscanCount={2}
                             onItemsRendered={this.updateCurrentVisiblePage.bind(this)}
                             ref={this._list}
-                            innerRef={this._listContainer}
                         >
                             {PageRenderer}
                         </VariableSizeList>
