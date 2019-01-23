@@ -22,7 +22,7 @@ class Viewer extends PureComponent {
         super(props);
 
         this.state = {
-            containerWidth: null,
+            initialContainerHeight: null,
             containerHeight: null,
             pdf: null,
             currentPage: 1,
@@ -32,8 +32,8 @@ class Viewer extends PureComponent {
             pages: new WeakMap
         };
 
-        this._viewerContainer = createRef();
         this._list = createRef();
+        this._listContainer = createRef();
 
         this._callResizeHandler = debounce(50, this.handleResize.bind(this));
         this._callOrientationChangeHandler = debounce(1000, this.handleResize.bind(this));
@@ -43,7 +43,6 @@ class Viewer extends PureComponent {
         this._mounted = true;
         window.addEventListener('resize', this._callResizeHandler);
         window.addEventListener('orientationchange', this._callOrientationChangeHandler);
-        this.computeContainerBounds();
     }
 
     componentWillUnmount() {
@@ -84,20 +83,9 @@ class Viewer extends PureComponent {
 
             this.setState({
                 cachedPageDimensions: pageDimensions,
+                initialContainerHeight: height,
                 containerHeight: height
             });
-        });
-    }
-
-    computeContainerBounds() {
-        if (!this._viewerContainer) {
-            return;
-        }
-
-        const rect = this._viewerContainer.current.getBoundingClientRect();
-        this.setState({
-            containerWidth: rect.width,
-            containerHeight: rect.height
         });
     }
 
@@ -134,14 +122,16 @@ class Viewer extends PureComponent {
     }
 
     handleResize() {
-        const {currentPage, responsiveScale} = this.state;
+        const {currentPage, responsiveScale, initialContainerHeight} = this.state;
 
         // Recompute the responsive scale factor on window resize
         const newResponsiveScale = this.computeResponsiveScale(currentPage);
 
         if (newResponsiveScale && responsiveScale !== newResponsiveScale) {
+            const containerHeight = initialContainerHeight / newResponsiveScale;
+
             this.setState(
-                {responsiveScale: newResponsiveScale},
+                {responsiveScale: newResponsiveScale, containerHeight},
                 () => this.recomputeRowHeights()
             );
         }
@@ -158,39 +148,38 @@ class Viewer extends PureComponent {
         } = this.state;
 
         return (
-            <div ref={this._viewerContainer}>
-                <Document
-                    file="./test.pdf"
-                    loading={<Loader />}
-                    onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
-                    onLoadError={error => console.error(error)} // eslint-disable-line no-console
-                >
-                    {cachedPageDimensions && (
-                        <Fragment>
-                            <Buttons
-                                numPages={pdf.numPages}
-                                onClick={this.handleClick.bind(this)} />
-                            <VariableSizeList
-                                height={containerHeight}
-                                itemCount={pdf.numPages}
-                                itemSize={this.computeRowHeight.bind(this)}
-                                itemData={{
-                                    scale,
-                                    pages,
-                                    pageNumbers,
-                                    numPages: pdf.numPages,
-                                    triggerResize: this.handleResize.bind(this)
-                                }}
-                                overscanCount={2}
-                                onItemsRendered={this.updateCurrentVisiblePage.bind(this)}
-                                ref={this._list}
-                            >
-                                {PageRenderer}
-                            </VariableSizeList>
-                        </Fragment>
-                    )}
-                </Document>
-            </div>
+            <Document
+                file="./test.pdf"
+                loading={<Loader />}
+                onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
+                onLoadError={error => console.error(error)} // eslint-disable-line no-console
+            >
+                {cachedPageDimensions && (
+                    <Fragment>
+                        <Buttons
+                            numPages={pdf.numPages}
+                            onClick={this.handleClick.bind(this)} />
+                        <VariableSizeList
+                            height={containerHeight}
+                            itemCount={pdf.numPages}
+                            itemSize={this.computeRowHeight.bind(this)}
+                            itemData={{
+                                scale,
+                                pages,
+                                pageNumbers,
+                                numPages: pdf.numPages,
+                                triggerResize: this.handleResize.bind(this)
+                            }}
+                            overscanCount={2}
+                            onItemsRendered={this.updateCurrentVisiblePage.bind(this)}
+                            ref={this._list}
+                            innerRef={this._listContainer}
+                        >
+                            {PageRenderer}
+                        </VariableSizeList>
+                    </Fragment>
+                )}
+            </Document>
         );
     }
 
