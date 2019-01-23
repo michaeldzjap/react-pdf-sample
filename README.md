@@ -6,7 +6,7 @@ A [react-pdf](https://github.com/wojtekmaj/react-pdf) + ~~[react-virtualized](ht
 
 ## Installation
 - `npm install`
-- `npm run build` or `npm run watch`
+- `npm run dev`, `npm run prod` or `npm run watch`
 
 **Note**: to serve the included sample pdf over http use something like [http-server](https://github.com/indexzero/http-server)
 
