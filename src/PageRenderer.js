@@ -21,9 +21,13 @@ class PageRenderer extends PureComponent {
                 <div
                     ref={ref => {
                         const {pages, pageNumbers} = this.props.data;
-                        const key = {pageNumber};
-                        pageNumbers.set(pageNumber, key);
-                        pages.set(key, ref);
+
+                        if (!pageNumbers.has(pageNumber)) {
+                            const key = {pageNumber};
+                            pageNumbers.set(pageNumber, key);
+                        }
+
+                        pages.set(pageNumbers.get(pageNumber), ref);
                     }}
                 >
                     <Page

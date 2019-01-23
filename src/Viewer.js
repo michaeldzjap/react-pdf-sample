@@ -43,6 +43,7 @@ class Viewer extends PureComponent {
         this._mounted = true;
         window.addEventListener('resize', this._callResizeHandler);
         window.addEventListener('orientationchange', this._callOrientationChangeHandler);
+        this.computeContainerBounds();
     }
 
     componentWillUnmount() {
