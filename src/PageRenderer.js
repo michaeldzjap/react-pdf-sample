@@ -19,7 +19,8 @@ class PageRenderer extends PureComponent {
 
         return (
             <div {...{style}}>
-                <div ref={ref => _pages.set(pageNumber, ref)}>
+                <div
+                    ref={ref => _pages.set(pageNumber, ref)}>
                     <Page
                         {...{pageNumber}}
                         {...{scale}}

@@ -126,11 +126,14 @@ class Viewer extends PureComponent {
 
         // Recompute the responsive scale factor on window resize
         const node = this._pages.get(currentPage);
-        const newResponsiveScale = cachedPageDimensions.get(currentPage)[1] / node.clientHeight;
-        if (responsiveScale !== newResponsiveScale) {
-            this.setState({
-                responsiveScale: newResponsiveScale
-            }, () => this.recomputeRowHeights());
+
+        if (node) {
+            const newResponsiveScale = cachedPageDimensions.get(currentPage)[1] / node.clientHeight;
+            if (responsiveScale !== newResponsiveScale) {
+                this.setState({
+                    responsiveScale: newResponsiveScale
+                }, () => this.recomputeRowHeights());
+            }
         }
     }
 

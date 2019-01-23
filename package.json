@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node -r @babel/register ./node_modules/.bin/webpack --progress --hide-modules --config webpack.dev.js",
-    "watch": "node -r @babel/register ./node_modules/.bin/webpack --watch --progress --hide-modules",
+    "watch": "node -r @babel/register ./node_modules/.bin/webpack --watch --progress --hide-modules --config webpack.dev.js",
     "prod": "node -r @babel/register ./node_modules/.bin/webpack --progress --hide-modules --config webpack.prod.js"
   },
   "keywords": [
