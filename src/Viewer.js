@@ -22,6 +22,8 @@ class Viewer extends PureComponent {
         super(props);
 
         this.state = {
+            containerWidth: null,
+            containerHeight: null,
             pdf: null,
             currentPage: 1,
             cachedPageDimensions: null,
@@ -30,6 +32,7 @@ class Viewer extends PureComponent {
             pages: new WeakMap
         };
 
+        this._viewerContainer = createRef();
         this._list = createRef();
 
         this._callResizeHandler = debounce(50, this.handleResize.bind(this));
@@ -59,6 +62,8 @@ class Viewer extends PureComponent {
             .from({length: pdf.numPages}, (v, i) => i + 1)
             .map(pageNumber => pdf.getPage(pageNumber));
 
+        let height = 0;
+
         // Assuming all pages may have different heights. Otherwise we can just
         // load the first page and use its height for determining all the row
         // heights.
@@ -73,9 +78,25 @@ class Viewer extends PureComponent {
                 const h = page.view[3] * this.props.scale;
 
                 pageDimensions.set(page.pageIndex + 1, [w, h]);
+                height += h;
             }
 
-            this.setState({cachedPageDimensions: pageDimensions});
+            this.setState({
+                cachedPageDimensions: pageDimensions,
+                containerHeight: height
+            });
+        });
+    }
+
+    computeContainerBounds() {
+        if (!this._viewerContainer) {
+            return;
+        }
+
+        const rect = this._viewerContainer.current.getBoundingClientRect();
+        this.setState({
+            containerWidth: rect.width,
+            containerHeight: rect.height
         });
     }
 
@@ -131,39 +152,44 @@ class Viewer extends PureComponent {
 
     render() {
         const {scale} = this.props;
-        const {cachedPageDimensions, pdf, pages, pageNumbers} = this.state;
+        const {
+            cachedPageDimensions, containerHeight, pdf, pages, pageNumbers
+        } = this.state;
 
         return (
-            <Document
-                file="./test.pdf"
-                loading={<Loader />}
-                onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
-                onLoadError={error => console.error(error)} // eslint-disable-line no-console
-            >
-                {cachedPageDimensions && (
-                    <Fragment>
-                        <Buttons
-                            numPages={pdf.numPages}
-                            onClick={this.handleClick.bind(this)} />
-                        <VariableSizeList
-                            itemCount={pdf.numPages}
-                            itemSize={this.computeRowHeight.bind(this)}
-                            itemData={{
-                                scale,
-                                pages,
-                                pageNumbers,
-                                numPages: pdf.numPages,
-                                triggerResize: this.handleResize.bind(this)
-                            }}
-                            overscanCount={2}
-                            onItemsRendered={this.updateCurrentVisiblePage.bind(this)}
-                            ref={this._list}
-                        >
-                            {PageRenderer}
-                        </VariableSizeList>
-                    </Fragment>
-                )}
-            </Document>
+            <div ref={this._viewerContainer}>
+                <Document
+                    file="./test.pdf"
+                    loading={<Loader />}
+                    onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
+                    onLoadError={error => console.error(error)} // eslint-disable-line no-console
+                >
+                    {cachedPageDimensions && (
+                        <Fragment>
+                            <Buttons
+                                numPages={pdf.numPages}
+                                onClick={this.handleClick.bind(this)} />
+                            <VariableSizeList
+                                height={containerHeight}
+                                itemCount={pdf.numPages}
+                                itemSize={this.computeRowHeight.bind(this)}
+                                itemData={{
+                                    scale,
+                                    pages,
+                                    pageNumbers,
+                                    numPages: pdf.numPages,
+                                    triggerResize: this.handleResize.bind(this)
+                                }}
+                                overscanCount={2}
+                                onItemsRendered={this.updateCurrentVisiblePage.bind(this)}
+                                ref={this._list}
+                            >
+                                {PageRenderer}
+                            </VariableSizeList>
+                        </Fragment>
+                    )}
+                </Document>
+            </div>
         );
     }
 
