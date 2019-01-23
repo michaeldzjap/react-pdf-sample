@@ -12,20 +12,32 @@ class PageRenderer extends PureComponent {
 
     render() {
         const {index, data, style} = this.props;
-        const {cachedPageDimensions, scale, _pages} = data;
+        const {scale, numPages, triggerResize} = data;
 
         const pageNumber = index + 1;
-        const pageDimensions = cachedPageDimensions.get(pageNumber);
 
         return (
             <div {...{style}}>
                 <div
-                    ref={ref => _pages.set(pageNumber, ref)}>
+                    ref={ref => {
+                        const {pages, pageNumbers} = this.props.data;
+                        const key = {pageNumber};
+                        pageNumbers.set(pageNumber, key);
+                        pages.set(key, ref);
+                    }}
+                >
                     <Page
                         {...{pageNumber}}
                         {...{scale}}
                         renderAnnotationLayer={false}
-                        onLoadError={error => console.error(error)} /> {/* eslint-disable-line no-console */}
+                        onLoadError={error => console.error(error) /* eslint-disable-line no-console */}
+                        onLoadSuccess={page => {
+                            // This is necessary to ensure the row heights of
+                            // the variable list are correctly initialised.
+                            if (page.pageNumber === numPages) {
+                                triggerResize();
+                            }
+                        }} />
                 </div>
             </div>
         );
