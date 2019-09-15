@@ -16,7 +16,7 @@
   "author": "Michael Dzjaparidze",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.5.5",
+    "@babel/runtime": "^7.6.0",
     "babel-runtime": "^6.26.0",
     "loaders.css": "^0.1.2",
     "prop-types": "^15.7.2",
@@ -27,25 +27,25 @@
     "throttle-debounce": "^2.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
+    "@babel/core": "^7.6.0",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-transform-runtime": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
     "@babel/preset-react": "^7.0.0",
-    "@babel/register": "^7.5.5",
-    "babel-eslint": "^10.0.2",
+    "@babel/register": "^7.6.0",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^3.2.0",
-    "eslint": "^6.1.0",
+    "eslint": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-react": "^7.14.3",
     "node-sass": "^4.12.0",
     "resolve-url-loader": "^3.1.0",
-    "sass-loader": "^7.2.0",
+    "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
-    "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6",
-    "webpack-merge": "^4.2.1"
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.8",
+    "webpack-merge": "^4.2.2"
   }
 }
