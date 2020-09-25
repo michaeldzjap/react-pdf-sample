@@ -1,7 +1,6 @@
-import React, {Component} from 'react';
+import React, { PureComponent } from 'react';
 
-class Loader extends Component {
-
+class Loader extends PureComponent {
     render() {
         return (
             <div className="loader">
@@ -15,7 +14,6 @@ class Loader extends Component {
             </div>
         );
     }
-
 }
 
 export default Loader;

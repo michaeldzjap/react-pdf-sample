@@ -1,22 +1,21 @@
-import React, {PureComponent, Fragment, createRef} from 'react';
+import React, { PureComponent, Fragment, createRef } from 'react';
 import PropTypes from 'prop-types';
-import {Document} from 'react-pdf/dist/entry.webpack';
-import {VariableSizeList} from 'react-window';
-import {debounce} from 'throttle-debounce';
+import { Document } from 'react-pdf/dist/esm/entry.webpack';
+import { VariableSizeList } from 'react-window';
+import { debounce } from 'throttle-debounce';
 
 import Loader from './Loader';
 import PageRenderer from './PageRenderer';
 import Buttons from './Buttons';
 
 class Viewer extends PureComponent {
-
     static propTypes = {
-        scale: PropTypes.number.isRequired
-    }
+        scale: PropTypes.number.isRequired,
+    };
 
     static defaultProps = {
-        scale: 1.2
-    }
+        scale: 1.2,
+    };
 
     constructor(props) {
         super(props);
@@ -28,8 +27,8 @@ class Viewer extends PureComponent {
             currentPage: 1,
             cachedPageDimensions: null,
             responsiveScale: 1,
-            pageNumbers: new Map,
-            pages: new WeakMap
+            pageNumbers: new Map(),
+            pages: new WeakMap(),
         };
 
         this._list = createRef();
@@ -57,21 +56,21 @@ class Viewer extends PureComponent {
      * @returns {void}
      */
     cachePageDimensions(pdf) {
-        const promises = Array
-            .from({length: pdf.numPages}, (v, i) => i + 1)
-            .map(pageNumber => pdf.getPage(pageNumber));
+        const promises = Array.from({ length: pdf.numPages }, (v, i) => i + 1).map((pageNumber) => {
+            return pdf.getPage(pageNumber);
+        });
 
         let height = 0;
 
         // Assuming all pages may have different heights. Otherwise we can just
         // load the first page and use its height for determining all the row
         // heights.
-        Promise.all(promises).then(pages => {
+        Promise.all(promises).then((pages) => {
             if (!this._mounted) {
                 return;
             }
 
-            const pageDimensions = new Map;
+            const pageDimensions = new Map();
             for (const page of pages) {
                 const w = page.view[2] * this.props.scale;
                 const h = page.view[3] * this.props.scale;
@@ -83,7 +82,7 @@ class Viewer extends PureComponent {
             this.setState({
                 cachedPageDimensions: pageDimensions,
                 initialContainerHeight: height,
-                containerHeight: height
+                containerHeight: height,
             });
         });
     }
@@ -93,25 +92,25 @@ class Viewer extends PureComponent {
     }
 
     computeRowHeight(index) {
-        const {cachedPageDimensions, responsiveScale} = this.state;
+        const { cachedPageDimensions, responsiveScale } = this.state;
         if (cachedPageDimensions && responsiveScale) {
-            return (cachedPageDimensions.get(index + 1)[1] / responsiveScale);
+            return cachedPageDimensions.get(index + 1)[1] / responsiveScale;
         }
 
         return 768; // Initial height
     }
 
     onDocumentLoadSuccess(pdf) {
-        this.setState({pdf});
+        this.setState({ pdf });
         this.cachePageDimensions(pdf);
     }
 
-    updateCurrentVisiblePage({visibleStopIndex}) {
-        this.setState({currentPage: visibleStopIndex + 1});
+    updateCurrentVisiblePage({ visibleStopIndex }) {
+        this.setState({ currentPage: visibleStopIndex + 1 });
     }
 
     computeResponsiveScale(pageNumber) {
-        const {cachedPageDimensions, pages, pageNumbers} = this.state;
+        const { cachedPageDimensions, pages, pageNumbers } = this.state;
 
         const node = pages.get(pageNumbers.get(pageNumber));
 
@@ -121,7 +120,7 @@ class Viewer extends PureComponent {
     }
 
     handleResize() {
-        const {currentPage, responsiveScale, initialContainerHeight} = this.state;
+        const { currentPage, responsiveScale, initialContainerHeight } = this.state;
 
         // Recompute the responsive scale factor on window resize
         const newResponsiveScale = this.computeResponsiveScale(currentPage);
@@ -129,10 +128,7 @@ class Viewer extends PureComponent {
         if (newResponsiveScale && responsiveScale !== newResponsiveScale) {
             const containerHeight = initialContainerHeight / newResponsiveScale;
 
-            this.setState(
-                {responsiveScale: newResponsiveScale, containerHeight},
-                () => this.recomputeRowHeights()
-            );
+            this.setState({ responsiveScale: newResponsiveScale, containerHeight }, () => this.recomputeRowHeights());
         }
     }
 
@@ -141,23 +137,19 @@ class Viewer extends PureComponent {
     }
 
     render() {
-        const {scale} = this.props;
-        const {
-            cachedPageDimensions, containerHeight, pdf, pages, pageNumbers
-        } = this.state;
+        const { scale } = this.props;
+        const { cachedPageDimensions, containerHeight, pdf, pages, pageNumbers } = this.state;
 
         return (
             <Document
                 file="./test.pdf"
                 loading={<Loader />}
                 onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
-                onLoadError={error => console.error(error)} // eslint-disable-line no-console
+                onLoadError={(error) => console.error(error)} // eslint-disable-line no-console
             >
                 {cachedPageDimensions && (
                     <Fragment>
-                        <Buttons
-                            numPages={pdf.numPages}
-                            onClick={this.handleClick.bind(this)} />
+                        <Buttons numPages={pdf.numPages} onClick={this.handleClick.bind(this)} />
                         <VariableSizeList
                             height={containerHeight}
                             itemCount={pdf.numPages}
@@ -167,7 +159,7 @@ class Viewer extends PureComponent {
                                 pages,
                                 pageNumbers,
                                 numPages: pdf.numPages,
-                                triggerResize: this.handleResize.bind(this)
+                                triggerResize: this.handleResize.bind(this),
                             }}
                             overscanCount={2}
                             onItemsRendered={this.updateCurrentVisiblePage.bind(this)}
@@ -180,7 +172,6 @@ class Viewer extends PureComponent {
             </Document>
         );
     }
-
 }
 
 export default Viewer;

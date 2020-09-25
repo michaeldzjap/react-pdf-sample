@@ -1,12 +1,11 @@
-import React, {Component} from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-class Buttons extends Component {
-
+class Buttons extends PureComponent {
     static propTypes = {
         onClick: PropTypes.func.isRequired,
-        numPages: PropTypes.number.isRequired
-    }
+        numPages: PropTypes.number.isRequired,
+    };
 
     render() {
         return (
@@ -14,28 +13,15 @@ class Buttons extends Component {
                 <button className="btn" onClick={() => this.props.onClick(0)}>
                     First Page
                 </button>
-                <button
-                    className="btn"
-                    onClick={
-                        () => (
-                            this.props.onClick(
-                                Math.floor((this.props.numPages - 1) / 2)
-                            )
-                        )
-                    }
-                >
+                <button className="btn" onClick={() => this.props.onClick(Math.floor((this.props.numPages - 1) / 2))}>
                     Middle Page
                 </button>
-                <button
-                    className="btn"
-                    onClick={() => this.props.onClick(this.props.numPages - 1)}
-                >
+                <button className="btn" onClick={() => this.props.onClick(this.props.numPages - 1)}>
                     Last Page
                 </button>
             </div>
         );
     }
-
 }
 
 export default Buttons;

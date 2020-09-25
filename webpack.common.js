@@ -12,7 +12,7 @@ export default {
             'react-window',
             'throttle-debounce',
         ],
-        style: './sass/app'
+        style: './sass/app',
     },
     output: {
         filename: '[name].js',
@@ -25,8 +25,8 @@ export default {
                 exclude: path.resolve(__dirname, 'node_modules'),
                 loader: 'babel-loader',
                 options: {
-                    cacheDirectory: true
-                }
+                    cacheDirectory: true,
+                },
             },
             {
                 test: /\.s?css$/,
@@ -34,19 +34,21 @@ export default {
                     'style-loader',
                     'css-loader',
                     'resolve-url-loader',
-                    'sass-loader'
-                ]
-            }
-        ]
+                    'sass-loader',
+                ],
+            },
+        ],
     },
     plugins: [
-        new CopyWebpackPlugin([
-            {from: './src/index.html', to: './'},
-            {from: './src/test.pdf', to: './'},
-        ])
+        new CopyWebpackPlugin({
+            patterns: [
+                {from: './src/index.html', to: './'},
+                {from: './src/test.pdf', to: './'},
+            ],
+        }),
     ],
     resolve: {
-        extensions: ['.js', '.jsx', '.scss']
+        extensions: ['.js', '.jsx', '.scss'],
     },
     optimization: {
         splitChunks: {
@@ -55,13 +57,13 @@ export default {
                     chunks: 'initial',
                     name: 'vendor',
                     test: 'vendor',
-                    enforce: true
-                }
-            }
+                    enforce: true,
+                },
+            },
         },
         runtimeChunk: {
-            name: 'manifest'
+            name: 'manifest',
         },
-        noEmitOnErrors: true
-    }
+        noEmitOnErrors: true,
+    },
 };
