@@ -21,8 +21,7 @@ class Viewer extends PureComponent {
         super(props);
 
         this.state = {
-            initialContainerHeight: null,
-            containerHeight: null,
+            containerHeight: window.innerHeight,
             pdf: null,
             currentPage: 1,
             cachedPageDimensions: null,
@@ -60,8 +59,6 @@ class Viewer extends PureComponent {
             return pdf.getPage(pageNumber);
         });
 
-        let height = 0;
-
         // Assuming all pages may have different heights. Otherwise we can just
         // load the first page and use its height for determining all the row
         // heights.
@@ -71,19 +68,15 @@ class Viewer extends PureComponent {
             }
 
             const pageDimensions = new Map();
+
             for (const page of pages) {
                 const w = page.view[2] * this.props.scale;
                 const h = page.view[3] * this.props.scale;
 
-                pageDimensions.set(page.pageIndex + 1, [w, h]);
-                height += h;
+                pageDimensions.set(page._pageIndex + 1, [w, h]);
             }
 
-            this.setState({
-                cachedPageDimensions: pageDimensions,
-                initialContainerHeight: height,
-                containerHeight: height,
-            });
+            this.setState({ cachedPageDimensions: pageDimensions });
         });
     }
 
@@ -93,6 +86,7 @@ class Viewer extends PureComponent {
 
     computeRowHeight(index) {
         const { cachedPageDimensions, responsiveScale } = this.state;
+
         if (cachedPageDimensions && responsiveScale) {
             return cachedPageDimensions.get(index + 1)[1] / responsiveScale;
         }
@@ -120,16 +114,16 @@ class Viewer extends PureComponent {
     }
 
     handleResize() {
-        const { currentPage, responsiveScale, initialContainerHeight } = this.state;
+        const { currentPage, responsiveScale } = this.state;
 
         // Recompute the responsive scale factor on window resize
         const newResponsiveScale = this.computeResponsiveScale(currentPage);
 
         if (newResponsiveScale && responsiveScale !== newResponsiveScale) {
-            const containerHeight = initialContainerHeight / newResponsiveScale;
-
-            this.setState({ responsiveScale: newResponsiveScale, containerHeight }, () => this.recomputeRowHeights());
+            this.setState({ responsiveScale: newResponsiveScale }, () => this.recomputeRowHeights());
         }
+
+        this.setState({ containerHeight: window.innerHeight });
     }
 
     handleClick(index) {
