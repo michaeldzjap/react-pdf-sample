@@ -15,4 +15,4 @@ A [react-pdf](https://github.com/wojtekmaj/react-pdf) + ~~[react-virtualized](ht
 - ~~Scrolling to a specific row using `list.scrollToRow()` does not seem to work properly. When clicking the button "Page 82" you should be directed to page 70 of the included sample pdf (the page that shows figure 4.2). When you click the "Page 82" button twice it seems you are directed to the right page. Clicking the "Last Page" button twice does not direct you to the right page however.~~
 - ~~On _Firefox_ the pdf pages are flickering on scroll. This might be solvable by adding the following optimisation to `Page`~~
 - ~~Scrolling up/back after scrolling to a page using `list.scrollToRow()` causes jumpy behavior. [This](https://github.com/bvaughn/react-virtualized/issues/610) might be related?~~
-- Scrolling using `scrollToItem()` of _react-window_ doesn't seem to be working.
+- ~~Scrolling using `scrollToItem()` of _react-window_ doesn't seem to be working.~~
