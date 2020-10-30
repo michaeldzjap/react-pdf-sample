@@ -19,13 +19,14 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "babel-runtime": "^6.26.0",
+    "http-server": "^0.12.3",
     "loaders.css": "^0.1.2",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-pdf": "^5.0.0",
     "react-window": "^1.8.5",
-    "throttle-debounce": "^2.3.0"
+    "throttle-debounce": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -37,7 +38,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^6.2.1",
-    "css-loader": "^4.3.0",
+    "css-loader": "^5.0.0",
     "eslint": "^7.11.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-import": "^2.22.1",
