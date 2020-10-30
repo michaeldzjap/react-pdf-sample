@@ -23,7 +23,7 @@ export default {
             },
             {
                 test: /\.s?css$/,
-                loaders: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader'],
+                use: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader'],
             },
         ],
     },
@@ -52,6 +52,6 @@ export default {
         runtimeChunk: {
             name: 'manifest',
         },
-        noEmitOnErrors: true,
+        emitOnErrors: false,
     },
 };
