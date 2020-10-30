@@ -4,9 +4,9 @@
   "description": "Sample project using react-pdf together with react-window",
   "main": "index.js",
   "scripts": {
-    "dev": "node -r @babel/register ./node_modules/.bin/webpack --progress --hide-modules --config webpack.dev.js",
-    "watch": "node -r @babel/register ./node_modules/.bin/webpack --watch --progress --hide-modules --config webpack.dev.js",
-    "prod": "node -r @babel/register ./node_modules/.bin/webpack --progress --hide-modules --config webpack.prod.js",
+    "dev": "node -r @babel/register ./node_modules/.bin/webpack --progress --config webpack.dev.js",
+    "watch": "npm run dev -- --watch",
+    "prod": "node -r @babel/register ./node_modules/.bin/webpack --progress --config webpack.prod.js",
     "serve": "http-server ./dist"
   },
   "keywords": [
@@ -51,7 +51,7 @@
     "sass-loader": "^10.0.3",
     "style-loader": "^2.0.0",
     "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
+    "webpack-cli": "^4.1.0",
     "webpack-merge": "^5.2.0"
   }
 }

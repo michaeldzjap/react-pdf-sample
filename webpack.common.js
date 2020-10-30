@@ -4,14 +4,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 export default {
     entry: {
         bundle: './src/index',
-        vendor: [
-            'prop-types',
-            'react',
-            'react-dom',
-            'react-pdf',
-            'react-window',
-            'throttle-debounce',
-        ],
+        vendor: ['prop-types', 'react', 'react-dom', 'react-pdf', 'react-window', 'throttle-debounce'],
         style: './sass/app',
     },
     output: {
@@ -30,20 +23,15 @@ export default {
             },
             {
                 test: /\.s?css$/,
-                loaders: [
-                    'style-loader',
-                    'css-loader',
-                    'resolve-url-loader',
-                    'sass-loader',
-                ],
+                loaders: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader'],
             },
         ],
     },
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
-                {from: './src/index.html', to: './'},
-                {from: './src/test.pdf', to: './'},
+                { from: './src/index.html', to: './' },
+                { from: './src/test.pdf', to: './' },
             ],
         }),
     ],
