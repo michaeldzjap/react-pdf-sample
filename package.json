@@ -19,8 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.11.2",
-    "babel-runtime": "^6.26.0",
-    "http-server": "^13.0.2",
+    "http-server": "^14.0.0",
     "loaders.css": "^0.1.2",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
@@ -40,7 +39,7 @@
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.2.0",
-    "eslint": "^7.11.0",
+    "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^4.0.0",

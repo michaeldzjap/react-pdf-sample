@@ -1,5 +1,4 @@
-![dependencies](https://img.shields.io/david/michaeldzjap/react-pdf-sample.svg)
-![dev dependencies](https://img.shields.io/david/dev/michaeldzjap/react-pdf-sample.svg)
+![dependencies](https://img.shields.io/librariesio/github/michaeldzjap/react-pdf-sample)
 
 # react-pdf-sample
 A [react-pdf](https://github.com/wojtekmaj/react-pdf) + ~~[react-virtualized](https://github.com/bvaughn/react-virtualized)~~ [react-window](https://github.com/bvaughn/react-window) sample project
