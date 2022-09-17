@@ -1,6 +1,10 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Viewer from './Viewer';
 
-render(<Viewer />, document.getElementById('app'));
+const element = document.getElementById('app');
+
+if (element) {
+    createRoot(element).render(<Viewer />);
+}
