@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment, createRef } from 'react';
 import PropTypes from 'prop-types';
-import { Document } from 'react-pdf/dist/esm/entry.webpack';
+import { Document } from 'react-pdf';
 import { VariableSizeList } from 'react-window';
 import { debounce } from 'throttle-debounce';
 

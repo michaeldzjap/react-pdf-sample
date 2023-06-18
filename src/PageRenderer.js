@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Page } from 'react-pdf/dist/esm/entry.webpack';
+import { Page } from 'react-pdf';
 
 class PageRenderer extends PureComponent {
     static propTypes = {

@@ -23,7 +23,17 @@ export default {
             },
             {
                 test: /\.s?css$/,
-                use: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader'],
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'resolve-url-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: true,
+                        },
+                    },
+                ],
             },
         ],
     },

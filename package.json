@@ -24,7 +24,6 @@
     "prop-types": "^15.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-pdf": "^6.0.3",
     "react-window": "^1.8.5",
     "throttle-debounce": "^5.0.0"
   },
@@ -45,8 +44,9 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.21.4",
     "file-loader": "^6.2.0",
-    "node-sass": "^8.0.0",
+    "node-sass": "^9.0.0",
     "prettier": "^2.1.2",
+    "react-pdf": "^7.1.2",
     "resolve-url-loader": "^5.0.0",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.2.1",
